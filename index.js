@@ -56,7 +56,11 @@ async function run(){
         app.get('/myreviews',async(req,res)=>{
             const email = req.query.email;
             const query = {email:email}
-            const cursor = reviewCollection.find(query);
+            const options = {
+            // sort returned documents in ascending order by title (A->Z)
+                    sort: { date: -1 ,zone:-1, time:-1 , }
+                }
+            const cursor = reviewCollection.find(query,options);
             const result = await cursor.toArray();
             res.send(result)
         })
