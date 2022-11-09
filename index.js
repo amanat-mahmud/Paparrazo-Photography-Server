@@ -17,6 +17,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     const serviceCollection = client.db('paparrazo').collection('services')
     const reviewCollection = client.db('paparrazo').collection('reviews')
+    
     try{
         app.get('/',async(req,res)=>{
             const query = {}
@@ -50,6 +51,14 @@ async function run(){
             const review = req.body;
             const result = await reviewCollection.insertOne(review);
             res.send(result);
+        })
+        //get reviews of logged user
+        app.get('/myreviews',async(req,res)=>{
+            const email = req.query.email;
+            const query = {email:email}
+            const cursor = reviewCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result)
         })
     }
     catch{}
