@@ -45,6 +45,12 @@ async function run(){
             const result = await cursor.toArray();
             res.send(result);
         })
+        // adding review
+        app.post('/reviews',async (req,res)=>{
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
+        })
     }
     catch{}
     finally{}
