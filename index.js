@@ -64,6 +64,13 @@ async function run(){
             const result = await cursor.toArray();
             res.send(result)
         })
+        // deleting review of a user
+        app.delete('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await reviewCollection.deleteOne(query);
+            res.send(result);
+        })
     }
     catch{}
     finally{}
