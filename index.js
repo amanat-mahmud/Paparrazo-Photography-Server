@@ -40,7 +40,7 @@ async function run(){
     try{
         app.post('/jwt', (req, res) =>{
             const user = req.body;
-            console.log(user);
+            // console.log(user);
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d'})
             res.send({token})
         })
@@ -49,7 +49,7 @@ async function run(){
             const total = await serviceCollection.count();
             const cursor = serviceCollection.find(query);
             const result = await cursor.skip(total-3).limit(3).toArray();
-            console.log();
+            // console.log();
             res.send(result);
         })
         // geting all services
@@ -118,7 +118,7 @@ async function run(){
             const date = req.body.date
             const time = req.body.time
             const zone = req.body.zone
-            console.log(title,description,rating,date,time,zone);
+            // console.log(title,description,rating,date,time,zone);
             const query = { _id: ObjectId(id) }
             const updatedDoc = {
                 $set:{
