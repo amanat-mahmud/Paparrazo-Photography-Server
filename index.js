@@ -87,13 +87,6 @@ async function run(){
             if(decoded.email !== email){
                 res.status(403).send({message: 'unauthorized access'})
             }
-            // can also check like this
-            // let query = {};
-            // if (req.query.email) {
-            //     query = {
-            //         email: req.query.email
-            //     }
-            // }
 
             const options = {
                     sort: { date: -1 ,zone:-1, time:-1 , }
