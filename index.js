@@ -76,6 +76,31 @@ async function run(){
             const result = await reviewCollection.findOne(query);
             res.send(result)
         })
+        // updating review
+        app.patch('/review/:id',async(req,res)=>{
+            const id = req.params.id;
+            // console.log(id);
+            const title = req.body.title
+            const description = req.body.description
+            const rating = req.body.rating
+            const date = req.body.date
+            const time = req.body.time
+            const zone = req.body.zone
+            console.log(title,description,rating,date,time,zone);
+            const query = { _id: ObjectId(id) }
+            const updatedDoc = {
+                $set:{
+                    title:title,
+                    description:description,
+                    rating:rating,
+                    date:date,
+                    time:time,
+                    zone:zone
+                }
+            }
+            const result = await reviewCollection.updateOne(query, updatedDoc);
+            res.send(result);
+        })
     }
     catch{}
     finally{}
