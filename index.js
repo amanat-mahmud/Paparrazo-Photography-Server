@@ -21,8 +21,10 @@ async function run(){
     try{
         app.get('/',async(req,res)=>{
             const query = {}
+            const total = await serviceCollection.count();
             const cursor = serviceCollection.find(query);
-            const result = await cursor.limit(3).toArray();
+            const result = await cursor.skip(total-3).limit(3).toArray();
+            console.log();
             res.send(result);
         })
         // geting all services
