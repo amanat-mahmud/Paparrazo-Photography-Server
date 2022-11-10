@@ -101,6 +101,13 @@ async function run(){
             const result = await reviewCollection.updateOne(query, updatedDoc);
             res.send(result);
         })
+        //inserting service
+        app.post('/services',async (req,res)=>{
+            const service = req.body;
+            // console.log(service);
+            const result = await serviceCollection.insertOne(service);
+            res.send(result);
+        })
     }
     catch{}
     finally{}
