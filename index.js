@@ -57,7 +57,6 @@ async function run(){
             const email = req.query.email;
             const query = {email:email}
             const options = {
-            // sort returned documents in ascending order by title (A->Z)
                     sort: { date: -1 ,zone:-1, time:-1 , }
                 }
             const cursor = reviewCollection.find(query,options);
@@ -70,6 +69,12 @@ async function run(){
             const query = { _id: ObjectId(id) };
             const result = await reviewCollection.deleteOne(query);
             res.send(result);
+        })
+        app.get('/review/:id',async(req,res)=>{
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await reviewCollection.findOne(query);
+            res.send(result)
         })
     }
     catch{}
