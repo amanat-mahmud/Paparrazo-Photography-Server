@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express()
 const port = process.env.PORT || 5000;
 require('dotenv').config()
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 // middle ware
 app.use(cors())
@@ -13,12 +14,36 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@clu
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 ;
 
+function verifyJWT(req, res, next){
+    const authHeader = req.headers.authorization;
+
+    if(!authHeader){
+        return res.status(401).send({message: 'unauthorized access'});
+    }
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function(err, decoded){
+        // if we encounter error
+        if(err){
+            return res.status(403).send({message: 'Forbidden access'});
+        }
+        //error is not encountered
+        req.decoded = decoded;
+        next();
+    })
+}
 
 async function run(){
     const serviceCollection = client.db('paparrazo').collection('services')
     const reviewCollection = client.db('paparrazo').collection('reviews')
     
     try{
+        app.post('/jwt', (req, res) =>{
+            const user = req.body;
+            console.log(user);
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d'})
+            res.send({token})
+        })
         app.get('/',async(req,res)=>{
             const query = {}
             const total = await serviceCollection.count();
@@ -55,9 +80,21 @@ async function run(){
             res.send(result);
         })
         //get reviews of logged user
-        app.get('/myreviews',async(req,res)=>{
+        app.get('/myreviews',verifyJWT,async(req,res)=>{
             const email = req.query.email;
             const query = {email:email}
+            const decoded = req.decoded;
+            if(decoded.email !== email){
+                res.status(403).send({message: 'unauthorized access'})
+            }
+            // can also check like this
+            // let query = {};
+            // if (req.query.email) {
+            //     query = {
+            //         email: req.query.email
+            //     }
+            // }
+
             const options = {
                     sort: { date: -1 ,zone:-1, time:-1 , }
                 }
